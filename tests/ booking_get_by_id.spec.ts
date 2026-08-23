@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 
 import fs from "fs";
 
+
 test("Verify GET /booking/{id} returns booking details", async ({ request }) => { 
 
     const jsonFile = "testData/createBooking_api.json";
