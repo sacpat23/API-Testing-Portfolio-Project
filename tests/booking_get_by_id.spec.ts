@@ -1,13 +1,11 @@
 import { test, expect } from "@playwright/test";
-
 import fs from "fs";
+import path from "path";
 
 
-test("Verify GET /booking/{id} returns booking details", async ({ request }) => { 
-
-    const jsonFile = "testData/createBooking_api.json";
+test("Verify GET /booking/{id} returns booking details", async ({ request }) => {
+    const jsonFile = path.resolve(__dirname, '..', 'testData', 'createBooking_api.json');
     const requestBody = JSON.parse(fs.readFileSync(jsonFile, 'utf-8'));
-
 
     const response = await request.post("/booking", { data: requestBody });
 
@@ -17,9 +15,6 @@ test("Verify GET /booking/{id} returns booking details", async ({ request }) => 
     const bookingID = responseBody.bookingid;
     console.log("booking id is ", bookingID);
 
-
-//get Booking ID details
-
     const responseData = await request.get(`/booking/${bookingID}`);
     console.log(responseData);
 
@@ -27,7 +22,4 @@ test("Verify GET /booking/{id} returns booking details", async ({ request }) => 
     console.log(get_respponseBody);
     expect(responseData.ok()).toBeTruthy();
     expect(responseData.status()).toBe(200);
-
-})
-
-
+});

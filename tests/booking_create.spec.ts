@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
-
 import fs from 'fs';
+import path from 'path';
 
-test("Verify POST /booking creates a booking successfully", async ({ request }) => { 
+const readFixture = (fileName: string) =>
+    JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'testData', fileName), 'utf-8'));
 
-    const jsonFile = "testData/createBooking_api.json";
-    const requestBody = JSON.parse(fs.readFileSync(jsonFile, 'utf-8'));
-
+test("Verify POST /booking creates a booking successfully", async ({ request }) => {
+    const requestBody = readFixture('createBooking_api.json');
 
     const response = await request.post("/booking", { data: requestBody });
     const responseBody = await response.json();
@@ -19,7 +19,6 @@ test("Verify POST /booking creates a booking successfully", async ({ request }) 
 
     const booking_id = responseBody.bookingid;
     console.log("Booking ID is ", booking_id);
-    
 
     const booking = responseBody.booking;
 
@@ -28,12 +27,10 @@ test("Verify POST /booking creates a booking successfully", async ({ request }) 
         lastname: 'Brown',
         totalprice: 111,
         depositpaid: true,
-        // bookingdates: { checkin: '2018-01-01', checkout: '2019-01-01' },
         additionalneeds: 'Breakfast'
-    })
-    
+    });
 
     expect(booking.bookingdates).toMatchObject({
-        checkin: '2018-01-01', checkout: '2019-01-01'  
-    })
-})
+        checkin: '2018-01-01', checkout: '2019-01-01'
+    });
+});

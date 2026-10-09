@@ -1,12 +1,10 @@
 import { test, expect } from "@playwright/test";
-
 import fs from "fs";
+import path from "path";
 
-test("Verify GET /booking returns bookings for a valid guest name", async ({ request }) => { 
-
-    const jsonFile = "testData/createBooking_api.json";
+test("Verify GET /booking returns bookings for a valid guest name", async ({ request }) => {
+    const jsonFile = path.resolve(__dirname, '..', 'testData', 'createBooking_api.json');
     const requestBody = JSON.parse(fs.readFileSync(jsonFile, 'utf-8'));
-
 
     const response = await request.post("/booking", { data: requestBody });
 
@@ -14,18 +12,15 @@ test("Verify GET /booking returns bookings for a valid guest name", async ({ req
     const bookingID = responseBody.bookingid;
     console.log("booking id is ", bookingID);
 
-    const firstName = await responseBody.booking.firstname;
+    const firstName = responseBody.booking.firstname;
     console.log("First Name is ", firstName);
-    const lastName = await responseBody.booking.lastname;
+    const lastName = responseBody.booking.lastname;
     console.log("Last Name is ", lastName);
-    console.log("=========================")
+    console.log("=========================");
 
-
-
-//get Booking ID details
-
-    //const responseData = await request.get(`/booking?firstname=${firstName}}&lastname=${lastName}`);        
-    const responseData = await request.get("/booking", { params: {firstName, lastName} });        
+    const responseData = await request.get("/booking", {
+        params: { firstname: firstName, lastname: lastName }
+    });
 
     const get_respponseBody = await responseData.json();
 
@@ -35,16 +30,10 @@ test("Verify GET /booking returns bookings for a valid guest name", async ({ req
 
     expect(get_respponseBody.length).toBeGreaterThan(0);
 
-    for (const item of get_respponseBody) { 
-
+    for (const item of get_respponseBody) {
         expect(item).toHaveProperty('bookingid');
         expect(typeof item.bookingid).toBe("number");
         expect(item.bookingid).toBeGreaterThan(0);
-
-
     }
-    
-
-})
-
+});
 
